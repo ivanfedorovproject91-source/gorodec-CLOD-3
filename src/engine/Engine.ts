@@ -105,9 +105,11 @@ export class Engine {
     await app.init({
       resizeTo: host,
       background: COL.sky,
-      antialias: true,
-      resolution: window.devicePixelRatio || 1,
+      // Более щадящий режим для мобильных GPU и встроенных браузеров.
+      antialias: false,
+      resolution: Math.min(window.devicePixelRatio || 1, 2),
       autoDensity: true,
+      powerPreference: 'low-power',
     });
     if (this.destroyed) {
       app.destroy(true, { children: true });
