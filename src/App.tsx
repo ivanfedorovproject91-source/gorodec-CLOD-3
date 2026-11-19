@@ -84,7 +84,16 @@ export default function App() {
       engine.onCursorChange = () => setCursor(engine.getCursor());
       engine.onEditorChange = () => setEd(engine.getEditorState());
       engine.onObjectsChange = () => scheduleSave();
-      await engine.start(hostRef.current, p.camera, p.grid);
+      try {
+        await engine.start(hostRef.current, p.camera, p.grid);
+      } catch (error) {
+        engine.destroy();
+        if (!cancelled) {
+          const detail = error instanceof Error ? error.message : String(error);
+          setStatus(`Ошибка запуска графики: ${detail.slice(0, 140)}`);
+        }
+        return;
+      }
       if (cancelled) {
         engine.destroy();
         return;
